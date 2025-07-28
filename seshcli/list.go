@@ -24,7 +24,9 @@ func NewListCommand(icon icon.Icon, json json.Json, list lister.Lister) *cobra.C
 			hideAttached, _ := cmd.Flags().GetBool("hide-attached")
 			icons, _ := cmd.Flags().GetBool("icons")
 			tmuxinator, _ := cmd.Flags().GetBool("tmuxinator")
+			github, _ := cmd.Flags().GetBool("github")
 			hideDuplicates, _ := cmd.Flags().GetBool("hide-duplicates")
+			refresh, _ := cmd.Flags().GetBool("refresh")
 
 			sessions, err := list.List(lister.ListOptions{
 				Config:         config,
@@ -34,7 +36,9 @@ func NewListCommand(icon icon.Icon, json json.Json, list lister.Lister) *cobra.C
 				Tmux:           tmux,
 				Zoxide:         zoxide,
 				Tmuxinator:     tmuxinator,
+				GitHub:         github,
 				HideDuplicates: hideDuplicates,
+				Refresh:        refresh,
 			})
 			if err != nil {
 				return fmt.Errorf("couldn't list sessions: %q", err)
@@ -68,7 +72,9 @@ func NewListCommand(icon icon.Icon, json json.Json, list lister.Lister) *cobra.C
 	cmd.Flags().BoolP("hide-attached", "H", false, "don't show currently attached sessions")
 	cmd.Flags().BoolP("icons", "i", false, "show icons")
 	cmd.Flags().BoolP("tmuxinator", "T", false, "show tmuxinator configs")
+	cmd.Flags().BoolP("github", "g", false, "show GitHub organization repositories")
 	cmd.Flags().BoolP("hide-duplicates", "d", false, "hide duplicate entries")
+	cmd.Flags().BoolP("refresh", "r", false, "force refresh GitHub cache")
 
 	return cmd
 }

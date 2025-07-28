@@ -24,13 +24,14 @@ func TestListTmuxinatorConfigs(t *testing.T) {
 			{Name: "dotfiles"},
 		}, nil)
 
-		lister := NewLister(mockConfig, mockHome, mockTmux, mockZoxide, mockTmuxinator)
+		mockGitHub := &MockGitHub{}
+		lister := NewLister(mockConfig, mockHome, mockTmux, mockZoxide, mockTmuxinator, mockGitHub)
 
 		realLister, ok := lister.(*RealLister)
 		if !ok {
 			log.Fatal("Cannot convert lister to *RealLister")
 		}
-		sessions, err := listTmuxinator(realLister)
+		sessions, err := listTmuxinator(realLister, ListOptions{})
 		assert.Equal(t, "tmuxinator:sesh", sessions.OrderedIndex[0])
 		assert.Equal(t, "tmuxinator:dotfiles", sessions.OrderedIndex[1])
 		assert.Nil(t, err)

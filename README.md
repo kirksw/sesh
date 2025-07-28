@@ -89,16 +89,13 @@ Here are limitations to keep in mind:
 
 For Linux users using [Ulauncher](https://ulauncher.io/) there is an [extension](https://ext.ulauncher.io/-/github-jacostag-sesh-ulauncher) to use sesh outside the terminal.
 
-
 Here are limitations to keep in mind:
 
 - tmux has to be running before you can use the extension
 
-
 ## Walker launcher usage (Linux)
 
 Create an action directly on $XDG_CONFIG_HOME/config.toml
-
 
 ```
 [[plugins]]
@@ -112,12 +109,14 @@ show_icon_when_single = true
 switcher_only = true
 ```
 
-### For the dmenu mode you can use:
+### For the dmenu mode you can use
 
-#### Fish shell:
+#### Fish shell
+
 set ssession $(sesh l -t -T -d -H | walker -d -f -k -p "Sesh sessions"); sesh cn --switch $ssession
 
-#### Bash/Zsh:
+#### Bash/Zsh
+
 ssession=$(sesh l -t -T -d -H | walker -d -f -k -p "Sesh sessions"); sesh cn --switch $ssession
 
 ##### For dmenu launchers replace walker -dfk with dmenu or rofi)
@@ -146,23 +145,38 @@ sesh connect $(sesh list | fzf)
 
 #### tmux + fzf
 
-In order to integrate with tmux, you can add a binding to your tmux config (`tmux.conf`). For example, the following will bind `ctrl-a T` to open a fzf prompt as a tmux popup (using `fzf-tmux`) and using different commands to list active sessions (`sesh list -t`), configured sessions (`sesh list -c`), zoxide directories (`sesh list -z`), and find directories (`fd...`).
+In order to integrate with tmux, you can add a binding to your tmux config (`tmux.conf`). For example, the following will bind `ctrl-a T` to open a fzf prompt as a tmux popup (using `fzf-tmux`) and using different commands to list active sessions (`sesh list -t`), configured sessions (`sesh list -c`), GitHub repositories (`sesh list --github`), zoxide directories (`sesh list -z`), and find directories (`fd...`).
 
 ```sh
 bind-key "T" run-shell "sesh connect \"$(
   sesh list --icons | fzf-tmux -p 80%,70% \
     --no-sort --ansi --border-label ' sesh ' --prompt '⚡  ' \
-    --header '  ^a all ^t tmux ^g configs ^x zoxide ^d tmux kill ^f find' \
+    --header '  ^a all ^t tmux ^g github ^c configs ^x zoxide ^d tmux kill ^f find' \
     --bind 'tab:down,btab:up' \
     --bind 'ctrl-a:change-prompt(⚡  )+reload(sesh list --icons)' \
     --bind 'ctrl-t:change-prompt(🪟  )+reload(sesh list -t --icons)' \
-    --bind 'ctrl-g:change-prompt(⚙️  )+reload(sesh list -c --icons)' \
+    --bind 'ctrl-g:change-prompt(🐙  )+reload(sesh list --github --icons)' \
+    --bind 'ctrl-c:change-prompt(⚙️  )+reload(sesh list -c --icons)' \
     --bind 'ctrl-x:change-prompt(📁  )+reload(sesh list -z --icons)' \
     --bind 'ctrl-f:change-prompt(🔎  )+reload(fd -H -d 2 -t d -E .Trash . ~)' \
     --bind 'ctrl-d:execute(tmux kill-session -t {2..})+change-prompt(⚡  )+reload(sesh list --icons)' \
     --preview-window 'right:55%' \
     --preview 'sesh preview {}'
 )\""
+```
+
+**GitHub Integration**: The `ctrl-g` binding shows GitHub repositories (both cloned and uncloned by default). Configure GitHub access by setting up a `sesh.toml` file:
+
+```toml
+[github]
+clone_dir = "~/code"
+include_personal = true
+show_uncloned = true      # Show uncloned repos in --github mode (default: true)
+show_description = false  # Hide repository descriptions for cleaner display (default: true)
+
+[[github.organizations]]
+name = "your-org"
+display_name = "Work"
 ```
 
 You can customize this however you want, see `man fzf` for more info on the different options.
@@ -270,7 +284,7 @@ You may want to blacklist certain tmux sessions from showing up in the results. 
 blacklist = ["scratch"]
 ```
 
-> [!NOTE] 
+> [!NOTE]
 > Works great with [tmux-floatx](https://github.com/omerxx/tmux-floax)
 
 ### Sorting
@@ -295,6 +309,7 @@ sort_order = [
   "config", # resulting order: config, tmux, tmuxinator, zoxide
 ]
 ```
+
 ### Default Session
 
 The default session can be configured to run a command when connecting to a session. This is useful for running a dev server or starting a tmux plugin.
@@ -335,10 +350,12 @@ preview_command = "bat --color=always ~/c/dotfiles/.config/tmux/tmux.conf"
 ```
 
 ### Path substitution
+
 If you want to use the path of the selected session in your startup or preview command, you can use the `{}` placeholder.  
 This will be replaced with the session's path when the command is run.
 
 An example of this in use is the following, where the `tmuxinator` default_project uses the path as key/value pair using [ERB syntax](https://github.com/tmuxinator/tmuxinator?tab=readme-ov-file#erb):
+
 ```toml
 [default_session]
 startup_command = "tmuxinator start default_project path={}"

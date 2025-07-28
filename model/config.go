@@ -9,6 +9,7 @@ type (
 		SessionConfigs       []SessionConfig      `toml:"session"`
 		SortOrder            []string             `toml:"sort_order"`
 		WindowConfigs        []WindowConfig       `toml:"window"`
+		GitHub               GitHubConfig         `toml:"github"`
 	}
 	Evaluation struct {
 		StrictMode bool `toml:"strict_mode"`

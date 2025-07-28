@@ -32,13 +32,14 @@ func TestListZoxideSessions(t *testing.T) {
 			},
 		}, nil)
 
-		lister := NewLister(mockConfig, mockHome, mockTmux, mockZoxide, mockTmuxinator)
+		mockGitHub := &MockGitHub{}
+		lister := NewLister(mockConfig, mockHome, mockTmux, mockZoxide, mockTmuxinator, mockGitHub)
 
 		realLister, ok := lister.(*RealLister)
 		if !ok {
 			log.Fatal("Cannot convert lister to *RealLister")
 		}
-		sessions, err := listZoxide(realLister)
+		sessions, err := listZoxide(realLister, ListOptions{})
 		assert.Equal(t, "zoxide:~/.config/sesh", sessions.OrderedIndex[0])
 		assert.Equal(t, "zoxide:~/.config/fish", sessions.OrderedIndex[1])
 		assert.Nil(t, err)

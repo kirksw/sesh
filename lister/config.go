@@ -10,7 +10,7 @@ func ConfigKey(name string) string {
 	return fmt.Sprintf("config:%s", name)
 }
 
-func listConfig(l *RealLister) (model.SeshSessions, error) {
+func listConfig(l *RealLister, opts ListOptions) (model.SeshSessions, error) {
 	orderedIndex := make([]string, 0)
 	directory := make(model.SeshSessionMap)
 	for _, session := range l.config.SessionConfigs {
@@ -46,7 +46,7 @@ func listConfig(l *RealLister) (model.SeshSessions, error) {
 
 func (l *RealLister) FindConfigSession(name string) (model.SeshSession, bool) {
 	key := ConfigKey(name)
-	sessions, _ := listConfig(l)
+	sessions, _ := listConfig(l, ListOptions{})
 	if session, exists := sessions.Directory[key]; exists {
 		return session, exists
 	} else {

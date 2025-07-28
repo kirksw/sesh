@@ -13,9 +13,11 @@ type (
 		Tmux           bool
 		Zoxide         bool
 		Tmuxinator     bool
+		GitHub         bool
 		HideDuplicates bool
+		Refresh        bool
 	}
-	srcStrategy func(*RealLister) (model.SeshSessions, error)
+	srcStrategy func(*RealLister, ListOptions) (model.SeshSessions, error)
 )
 
 var srcStrategies = map[string]srcStrategy{
@@ -23,6 +25,7 @@ var srcStrategies = map[string]srcStrategy{
 	"config":     listConfig,
 	"tmuxinator": listTmuxinator,
 	"zoxide":     listZoxide,
+	"github":     listGitHub,
 }
 
 func (l *RealLister) List(opts ListOptions) (model.SeshSessions, error) {
@@ -33,7 +36,7 @@ func (l *RealLister) List(opts ListOptions) (model.SeshSessions, error) {
 	srcsOrderedIndex = sortSources(srcsOrderedIndex, l.config.SortOrder)
 
 	for _, src := range srcsOrderedIndex {
-		sessions, err := srcStrategies[src](l)
+		sessions, err := srcStrategies[src](l, opts)
 		if err != nil {
 			return model.SeshSessions{}, err
 		}

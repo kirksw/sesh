@@ -47,6 +47,9 @@ func (i *RealIcon) AddIcon(s model.SeshSession) string {
 	case "config":
 		icon = configIcon
 		colorCode = 90 // gray
+	case "github":
+		icon = ""  // GitHub icon
+		colorCode = 35 // magenta
 	}
 	if icon != "" {
 		return fmt.Sprintf("%s %s", ansiString(colorCode, icon), s.Name)

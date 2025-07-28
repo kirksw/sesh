@@ -77,14 +77,15 @@ func TestListTmuxSessions(t *testing.T) {
 		mockHome := new(home.MockHome)
 		mockZoxide := new(zoxide.MockZoxide)
 		mockTmuxinator := new(tmuxinator.MockTmuxinator)
-		lister := NewLister(mockConfig, mockHome, mockTmux, mockZoxide, mockTmuxinator)
+		mockGitHub := &MockGitHub{}
+		lister := NewLister(mockConfig, mockHome, mockTmux, mockZoxide, mockTmuxinator, mockGitHub)
 
 		realLister, ok := lister.(*RealLister)
 		if !ok {
 			log.Fatal("Cannot convert lister to *RealLister")
 		}
 
-		sessions, err := listTmux(realLister)
+		sessions, err := listTmux(realLister, ListOptions{})
 		assert.Equal(t, "tmux:sesh/main", sessions.OrderedIndex[0])
 		assert.Equal(t, "sesh/main", sessions.Directory["tmux:sesh/main"].Name)
 		assert.Equal(t, "tmux:sesh/v2", sessions.OrderedIndex[1])
@@ -101,14 +102,15 @@ func TestListTmuxSessionsError(t *testing.T) {
 		mockHome := new(home.MockHome)
 		mockZoxide := new(zoxide.MockZoxide)
 		mockTmuxinator := new(tmuxinator.MockTmuxinator)
-		lister := NewLister(mockConfig, mockHome, mockTmux, mockZoxide, mockTmuxinator)
+		mockGitHub := &MockGitHub{}
+		lister := NewLister(mockConfig, mockHome, mockTmux, mockZoxide, mockTmuxinator, mockGitHub)
 
 		realLister, ok := lister.(*RealLister)
 		if !ok {
 			log.Fatal("Cannot convert lister to *RealLister")
 		}
 
-		sessions, err := listTmux(realLister)
+		sessions, err := listTmux(realLister, ListOptions{})
 		assert.Equal(t, model.SeshSessions{}, sessions)
 		assert.NotNil(t, err)
 		assert.Contains(t, err.Error(), "couldn't list tmux sessions")
@@ -180,14 +182,15 @@ func TestBlacklistHidesTmuxSession(t *testing.T) {
 		mockHome := new(home.MockHome)
 		mockZoxide := new(zoxide.MockZoxide)
 		mockTmuxinator := new(tmuxinator.MockTmuxinator)
-		lister := NewLister(mockConfig, mockHome, mockTmux, mockZoxide, mockTmuxinator)
+		mockGitHub := &MockGitHub{}
+		lister := NewLister(mockConfig, mockHome, mockTmux, mockZoxide, mockTmuxinator, mockGitHub)
 
 		realLister, ok := lister.(*RealLister)
 		if !ok {
 			log.Fatal("Cannot convert lister to *RealLister")
 		}
 
-		sessions, err := listTmux(realLister)
+		sessions, err := listTmux(realLister, ListOptions{})
 		assert.Equal(t, 1, len(sessions.OrderedIndex))
 		assert.Equal(t, "tmux:sesh/v2", sessions.OrderedIndex[0])
 		assert.Equal(t, "sesh/v2", sessions.Directory["tmux:sesh/v2"].Name)

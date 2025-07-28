@@ -10,7 +10,7 @@ func tmuxKey(name string) string {
 	return fmt.Sprintf("tmux:%s", name)
 }
 
-func listTmux(l *RealLister) (model.SeshSessions, error) {
+func listTmux(l *RealLister, opts ListOptions) (model.SeshSessions, error) {
 	tmuxSessions, err := l.tmux.ListSessions()
 	if err != nil {
 		return model.SeshSessions{}, fmt.Errorf("couldn't list tmux sessions: %q", err)
@@ -40,7 +40,7 @@ func listTmux(l *RealLister) (model.SeshSessions, error) {
 }
 
 func (l *RealLister) FindTmuxSession(name string) (model.SeshSession, bool) {
-	sessions, err := listTmux(l)
+	sessions, err := listTmux(l, ListOptions{})
 	if err != nil {
 		return model.SeshSession{}, false
 	}
@@ -53,7 +53,7 @@ func (l *RealLister) FindTmuxSession(name string) (model.SeshSession, bool) {
 }
 
 func (l *RealLister) GetLastTmuxSession() (model.SeshSession, bool) {
-	sessions, err := listTmux(l)
+	sessions, err := listTmux(l, ListOptions{})
 	if err != nil {
 		return model.SeshSession{}, false
 	}

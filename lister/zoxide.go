@@ -6,7 +6,7 @@ import (
 	"github.com/joshmedeski/sesh/v2/model"
 )
 
-func listZoxide(l *RealLister) (model.SeshSessions, error) {
+func listZoxide(l *RealLister, opts ListOptions) (model.SeshSessions, error) {
 	zoxideResults, err := l.zoxide.ListResults()
 	numZoxideResults := len(zoxideResults)
 	orderedIndex := make([]string, numZoxideResults)

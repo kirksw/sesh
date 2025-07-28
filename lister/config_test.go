@@ -18,6 +18,7 @@ func TestListConfigSessions(t *testing.T) {
 	mockZoxide := new(zoxide.MockZoxide)
 	mockTmux := new(tmux.MockTmux)
 	mockTmuxinator := new(tmuxinator.MockTmuxinator)
+	mockGitHub := &MockGitHub{}
 	config := model.Config{
 		SessionConfigs: []model.SessionConfig{
 			{
@@ -26,7 +27,7 @@ func TestListConfigSessions(t *testing.T) {
 			},
 		},
 	}
-	lister := NewLister(config, mockHome, mockTmux, mockZoxide, mockTmuxinator)
+	lister := NewLister(config, mockHome, mockTmux, mockZoxide, mockTmuxinator, mockGitHub)
 
 	realLister, ok := lister.(*RealLister)
 	if !ok {
@@ -35,7 +36,7 @@ func TestListConfigSessions(t *testing.T) {
 
 	// TODO: make sure Path has home expanded
 	t.Run("should list config sessions", func(t *testing.T) {
-		sessions, err := listConfig(realLister)
+		sessions, err := listConfig(realLister, ListOptions{})
 		assert.Nil(t, err)
 		assert.Equal(t, "config:sesh config", sessions.OrderedIndex[0])
 		assert.Equal(t, "/Users/joshmedeski/.config/sesh", sessions.Directory["config:sesh config"].Path)

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/joshmedeski/sesh/v2/dir"
+	"github.com/joshmedeski/sesh/v2/git"
 	"github.com/joshmedeski/sesh/v2/home"
 	"github.com/joshmedeski/sesh/v2/lister"
 	"github.com/joshmedeski/sesh/v2/model"
@@ -18,6 +19,7 @@ import (
 
 func TestEstablishTmuxConnection(t *testing.T) {
 	mockDir := new(dir.MockDir)
+	mockGit := new(git.MockGit)
 	mockHome := new(home.MockHome)
 	mockLister := new(lister.MockLister)
 	mockNamer := new(namer.MockNamer)
@@ -29,6 +31,7 @@ func TestEstablishTmuxConnection(t *testing.T) {
 	c := &RealConnector{
 		model.Config{},
 		mockDir,
+		mockGit,
 		mockHome,
 		mockLister,
 		mockNamer,

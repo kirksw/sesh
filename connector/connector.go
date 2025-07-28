@@ -2,6 +2,7 @@ package connector
 
 import (
 	"github.com/joshmedeski/sesh/v2/dir"
+	"github.com/joshmedeski/sesh/v2/git"
 	"github.com/joshmedeski/sesh/v2/home"
 	"github.com/joshmedeski/sesh/v2/lister"
 	"github.com/joshmedeski/sesh/v2/model"
@@ -19,6 +20,7 @@ type Connector interface {
 type RealConnector struct {
 	config     model.Config
 	dir        dir.Dir
+	git        git.Git
 	home       home.Home
 	lister     lister.Lister
 	namer      namer.Namer
@@ -31,6 +33,7 @@ type RealConnector struct {
 func NewConnector(
 	config model.Config,
 	dir dir.Dir,
+	git git.Git,
 	home home.Home,
 	lister lister.Lister,
 	namer namer.Namer,
@@ -42,6 +45,7 @@ func NewConnector(
 	return &RealConnector{
 		config,
 		dir,
+		git,
 		home,
 		lister,
 		namer,

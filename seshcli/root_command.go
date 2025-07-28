@@ -13,6 +13,7 @@ import (
 	"github.com/joshmedeski/sesh/v2/dir"
 	"github.com/joshmedeski/sesh/v2/execwrap"
 	"github.com/joshmedeski/sesh/v2/git"
+	"github.com/joshmedeski/sesh/v2/github"
 	"github.com/joshmedeski/sesh/v2/home"
 	"github.com/joshmedeski/sesh/v2/icon"
 	"github.com/joshmedeski/sesh/v2/json"
@@ -66,15 +67,20 @@ func NewRootCommand(version string) *cobra.Command {
 
 	slog.Debug("seshcli/root_command.go: NewRootCommand", "version", version, "config", config)
 
+	// github dependencies
+	githubClient := github.NewClient(config.GitHub.Token)
+	githubCache := github.NewCache(home)
+	githubLister := lister.NewGitHub(githubClient, githubCache)
+
 	// core dependencies
 	ls := ls.NewLs(config, shell)
-	lister := lister.NewLister(config, home, tmux, zoxide, tmuxinator)
+	lister := lister.NewLister(config, home, tmux, zoxide, tmuxinator, githubLister)
 	startup := startup.NewStartup(config, lister, tmux, home, replacer)
 	namer := namer.NewNamer(path, git, home)
-	connector := connector.NewConnector(config, dir, home, lister, namer, startup, tmux, zoxide, tmuxinator)
+	connector := connector.NewConnector(config, dir, git, home, lister, namer, startup, tmux, zoxide, tmuxinator)
 	icon := icon.NewIcon(config)
 	previewer := previewer.NewPreviewer(lister, tmux, icon, dir, home, ls, config, shell)
-	cloner := cloner.NewCloner(connector, git)
+	cloner := cloner.NewCloner(connector, git, config)
 
 	rootCmd := &cobra.Command{
 		Use:     "sesh",
@@ -91,6 +97,7 @@ func NewRootCommand(version string) *cobra.Command {
 		NewCloneCommand(cloner),
 		NewRootSessionCommand(lister, namer),
 		NewPreviewCommand(previewer),
+		NewCacheCommand(githubCache),
 	)
 
 	return rootCmd
